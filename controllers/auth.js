@@ -90,3 +90,81 @@ exports.login = async (req, res) => {
         console.log(error);
     }
 }
+
+
+
+exports.add = async (req, res) => {
+
+    var { pid, pstock} = req.body;
+    var ret = [];
+
+    db.query('SELECT * FROM shopkart WHERE pid = ?', [pid], async(error, results) => {
+        if(error){
+            console.log(error);
+        }
+        else{
+            console.log(results);
+            var dbstock = results[0].pstock;
+            ret = results[0];
+            // console.log(typeof pstock);
+            // ret = JSON.stringify(results);
+            newstock = Number(pstock)+dbstock;
+             console.log(ret);
+            // var fres = JSON.parse(ret)
+            // console.log(fres);
+            db.query('UPDATE shopkart SET pstock = ? WHERE pid = ?',[newstock, pid], function(error, results) {
+
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    // console.log(results);
+                    // console.log(pstock);
+                    // console.log(results.affectedRows);
+
+                    return res.render('add', {
+                        message: 'Added Item'
+                    });
+                    }
+            })
+        }
+    })
+}
+
+
+exports.remove = async (req, res) => {
+
+    var { pid, pstock} = req.body;
+    var ret = [];
+
+    db.query('SELECT * FROM shopkart WHERE pid = ?', [pid], async(error, results) => {
+        if(error){
+            console.log(error);
+        }
+        else{
+            //console.log(results[0].pstock);
+            var dbstock = results[0].pstock
+            // console.log(typeof pstock);
+            // ret = JSON.stringify(results);
+            newstock = dbstock - Number(pstock);
+            // console.log(ret);
+            // var fres = JSON.parse(ret)
+            // console.log(fres);
+            db.query('UPDATE shopkart SET pstock = ? WHERE pid = ?',[newstock, pid], function(error, results) {
+
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    // console.log(results);
+                    // console.log(pstock);
+                    // console.log(results.affectedRows);
+
+                    return res.render('remove', {
+                        message: 'Removed Item'
+                    });
+                    }
+            })
+        }
+    })
+}
